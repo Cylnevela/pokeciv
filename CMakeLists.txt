@@ -1,5 +1,10 @@
-cmake_minimum_required (VERSION 2.8)
-project (plt)
+cmake_minimum_required (VERSION 3.23)
+
+#Compiler
+set(CMAKE_CXX_COMPILER	"C:/MinGW/bin/g++")
+set(CMAKE_C_COMPILER	"C:/MinGW/bin/gcc")
+
+project (pokeciv)
 
 # Directories
 include_directories ("${PROJECT_SOURCE_DIR}/src/client")
@@ -21,8 +26,11 @@ IF(CMAKE_COMPILER_IS_GNUCC)
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 # Sources
+file(GLOB_RECURSE client_sources src/client/*.h)
 file(GLOB_RECURSE client_sources src/client/*.cpp)
+file(GLOB_RECURSE server_sources src/server/*.h)
 file(GLOB_RECURSE server_sources src/server/*.cpp)
+file(GLOB_RECURSE shared_sources src/shared/*.h)
 file(GLOB_RECURSE shared_sources src/shared/*.cpp)
 
 #jsoncpp
@@ -35,8 +43,8 @@ add_executable(server ${server_sources} ${shared_sources} ${jsoncpp_sources})
 
 # SFML
 if(WIN32)
-set(SFML_ROOT "D:/Utils/SFML-2.3")
-set(CMAKE_MODULE_PATH "${SFML_ROOT}/cmake/Modules" ${CMAKE_MODULE_PATH})
+set(SFML_ROOT "D:/Utils/SFML-2.5.1")
+set(CMAKE_MODULE_PATH "${SFML_ROOT}/lib/cmake/Modules" ${CMAKE_MODULE_PATH})
 else(WIN32)
 set(CMAKE_MODULE_PATH "/usr/share/SFML/cmake/Modules/" ${CMAKE_MODULE_PATH})
 endif(WIN32)
