@@ -13,9 +13,11 @@ Présente sur la carte
 
 ### I.B. Village tribal
 
-### I.C. 
+### I.C. Unités Civiles
 
 ## II. Culture
+
+### II.A. Unités Culturelles
 
 ## III. Science
 
@@ -31,6 +33,8 @@ Porygon : dans l'arbre de la science, porygon est une branche courte légèremen
 Métamorph : à voir s'il est réellement une création de l'homme
 
 ### III.B. Pokéballs
+
+### III.C. Unités Scientifiques
 
 ## IV. Armée
 
@@ -48,4 +52,5 @@ Les barbares sont remplacés par des dresseurs pokémons. En les affrontant ils 
 
 La religion de chaque civilisation est basée sur le culte d'un pokémon légendaire, chaque légendaire apporte des bonus spécifiques.
 
-## IV. 
+### V.A. Unités Religieuses
+

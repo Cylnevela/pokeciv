@@ -1,0 +1,20 @@
+@startuml
+
+package State {
+}
+
+package Engine {
+
+	class Engine {
+		- State::state currentState
+		- int tour
+
+		+ Engine()
+		+ ~Engine()
+		+ const int getTour() const
+		+ void increaseTour()
+	}
+
+}
+
+@enduml

@@ -1,0 +1,199 @@
+@startuml
+
+package State {
+
+	class State {
+		- std::unique_ptr<CellTab> grid
+		- std::unique_ptr<CreatureTab> characters
+		- std::vector<std::unique_ptr<Player>> players
+		- int totalCellNbr
+		- int freeCellNbr
+
+		+ State()
+		+ ~State()
+	}
+
+	class Player {
+		- PokeTeamId teamId
+		# int cellNbr
+		# int zonesNbr
+		# int conquestPoint
+		# int xLastCell = 0 ?
+		# int yLastCell = 0 ?
+		# int unitsLeft
+		# std::vector<std::unique_ptr<CityCell>> cityCells
+		# std::shared_ptr<ScientificTree> scientificTree
+		# std::shared_ptr<CulturalTree> culturalTree
+
+		+ Player()
+		+ Player(EPokeTeamId teamId)
+		+ ~Player()
+		+ const PokeTeamId getTeamId() const
+		+ void setTeamId (const PokeTeamId teamId)
+		+ const ScientificTree getScientificTree() const
+		+ const CulturalTree getCulturalTree() const
+		+ bool isThereUnits(int number)
+		+ void addCityCell(std::unique_ptr<CityCell> cityCell)
+		+ void deleteCityCell(std::unique_ptr<CityCell> cityCell)
+	}
+
+	enum EPokeTeamId {
+		+ Undef = 0
+		+ Sacha = 1
+		+ Pierre = 2
+		+ Ondine = 3
+		+ Peter = 4
+	}
+
+	package Map {
+
+		Class ElementTab {
+			# size_t width = 7
+			# size_t height = 5
+			- std::vector<std::unique_ptr<Element>> listOfElement
+			
+			+ ElementTab()
+			+ ~ElementTab()
+			+ void resize()
+			+ const std::unique_ptr<Element>& get (int i, int j) const
+			+ const std::unique_ptr<Element>& operator ( ) (int i, int j) const
+			+ const std::unique_ptr<Element>& getByNumber (int i, int j) const
+			+ const std::unique_ptr<Element>& set (int i, int j) const
+			+ const std::vector<std::unique_ptr<Element>>& getList () const
+		}
+
+		class CellTab extends ElementTab {
+			+ CellTab(size_t width, size_t height)
+			+ ~CellTab()
+			+ void initCells()
+			+ void assignCityCell (Player* player)
+		}
+
+		class UnitTab extends ElementTab {
+			+ UnitTab (size_t width, size_t height)
+			+ ~UnitTab ()
+			+ bool isEmpty (int i, int j)
+			+ void assignCityCell (Player* player)
+			+ bool moveElement (int from_i, int from_j, int to_i, int to_j)
+			+ bool setElement (Element element, int i, int j)
+		}
+
+		class Element {
+			# int x
+			# int y
+			- std::shared_ptr<Player> player
+
+			+ Element ()
+			+ ~Element ()
+		}
+
+		class Cell extends Element {
+			- ELandState landState
+
+			+ void setLandState(const ELandState landState)
+			+ const ELandState getLandState() const
+		}
+
+		class City extends Cell implements FightingAbility {
+		}
+
+		interface FightingAbility {
+			- int pv
+			- int atk
+			- int def
+
+			+ virtual void setPv(const int pv) = 0
+			+ virtual const int getPv () const = 0
+			+ virtual void setAtk(const int atk) = 0
+			+ virtual const int getAtk () const = 0
+			+ virtual void setDef(const int def) = 0
+			+ virtual const int getDef () const = 0
+		}
+
+		class Unit extends Element {
+			- int pm
+
+			+ void setPm(const int id)
+			+ const int getPm () const
+		}
+
+		class MilitaryUnit extends Unit implements FightingAbility {
+
+		}
+
+		class ReligiousUnit extends Unit implements FightingAbility {
+			- int religionId
+			+ const int getReligionId() const
+			+ void setReligionId(const int religionId)
+		}
+
+		class CivilianUnit extends Unit {
+
+		}
+
+		class GeniusUnit extends Unit {
+
+		}
+
+		enum ELandState {
+			+ UNDEF = 0
+			+ SEA = 1
+			+ OCEAN = 2
+			+ DESERT = 3
+			+ MOUNTAIN = 4
+			+ HILL = 5
+			+ GRASS = 6
+			+ TOUNDRA = 7
+			+ SNOW = 8
+			+ ICE = 9
+		}
+	}
+
+	package Development {
+
+		abstract class DevelopmentTree {
+			- int developmentPoint
+			+ void init()
+			+ virtual void unlockBonus() = 0
+			+ void setDevelopmentPoint(const int developmentPoint)
+			+ const int getDevelopmentPoint () const
+			+ virtual void increaseDevelopmentPoint () = 0
+		}
+
+		class ScientificTree extends DevelopmentTree {
+
+		}
+
+		class CulturalTree extends DevelopmentTree {
+
+		}
+
+		class Politic {
+			?
+		}
+
+	}
+
+	enum EPokeOwner {
+		+ UNDEF = 0
+		+ MINE = 1
+		+ ALLY = 2
+		+ NEUTRAL = 3
+		+ ENEMY = 4
+	}
+
+}
+
+State "1" *-- "n" Player
+State "1" *-- "2" ElementTab
+ElementTab *-- "width*height" Element
+CellTab *-- "width*height" Cell
+UnitTab *-- "width*height" Unit
+
+Cell *-- "1" ELandState
+
+Player *-- "1" EPokeTeamId
+Player *-- "1" ScientificTree
+Player *-- "1" CulturalTree
+
+@enduml
