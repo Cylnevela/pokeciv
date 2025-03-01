@@ -1,0 +1,83 @@
+@startuml
+
+package state {
+	class ElementTab
+	class Element
+}
+
+package SFML {
+	class Texture
+	class RenderTarget
+	class VertexArray
+}
+
+package render {
+
+	class Layer {
+		# std::unique_ptr<Surface> surface
+		# std::shared_ptr<TileSet> tileset
+
+		+ virtual void initSurface()
+		+ void printText(int x, int y, const stf::string& msg)
+	}
+
+	class ElementTabLayer extends Layer {
+		# const state::ElementTab& tab
+
+		+ void initSurface()
+	}
+
+	class CellTabLayer extends ElementTabLayer {
+		+ void initSurface()
+	}
+
+	class UnitTabLayer extends ElementTabLayer {
+		+ void initSurface()
+	}
+
+	class Surface {
+		# sf::Texture Texture
+		# std::vector<sf::VertexArray> quadsList
+
+		+ void loadTexture(const std::string& imgFile)
+		+ void setFinalLocation(int index, int shift, int x, inty, const Tile& tex)
+		+ void setTextureLocation(int index, cost Tile& tex)
+		+ void draw(sf::RenderTarget& target) const
+		+ void initQuads()
+	}
+
+	abstract class TileSet {
+		+ const int cellWidth
+		+ const int cellHeight
+		+ const std::string imageFile
+		+ const Tile& getTile(std::unique_ptr<state::Element> element) const
+	}
+
+	class CellTileSet extends TileSet{
+		- std::map<Tile> cells
+	}
+
+	class UnitTileSet extends TileSet{
+		- std::map<Tile> units
+	}
+
+	class Tile {
+		# int x = 0
+		# int y = 0
+		# int width
+		# int height
+	}
+
+	Layer *--"1" Surface
+	Layer "1"*--"1" 0TileSet
+	ElementTabLayer *-- ElementTab
+	Surface *--"1" Texture
+	Surface .. RenderTarget
+	Surface .. VertexArray
+	TileSet .. Element
+	CellTileSet *--"n" Tile
+	UnitTileSet *--"n" Tile
+
+}
+
+@enduml

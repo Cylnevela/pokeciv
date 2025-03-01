@@ -1,6 +1,8 @@
 @startuml
 
 package State {
+	class State
+	enum ELandState
 }
 
 package Engine {
@@ -8,12 +10,86 @@ package Engine {
 	class Engine {
 		- State::state currentState
 		- int tour
+		- std::map<int, std::shared_ptr<Command>> currentCommands
+		- std::stack<std::shared_ptr<Action>> pileAction
 
 		+ Engine()
 		+ ~Engine()
 		+ const int getTour() const
 		+ void increaseTour()
+		+ void addCommand(int priority, std::shared_ptr<Command> cmd)
+		+ void addAction(std::shared_ptr<Action> action)
+		+ void update()
+		+ void undo()
 	}
+
+	abstract class Command {
+		# int player
+		# CommandTypeID CommandTypeID
+		
+		+ ~Command()
+		+ void execute(std::stack<shared_ptr<Action>>& pile, state::State& state)
+		+ void const serialize(Json::Value& out, int nTour)
+		+ Command* deserialize (const Json::Value& in)
+	}
+
+	class NewGameCommand extends Command {
+	}
+
+	class MoveCommand extends Command {
+		# std::vector<int> initPos
+		# std::vector<int> finalPos
+	}
+
+	class PlaceLandCommand extends Command {
+		# std::vector<int> finalPos
+		# state::ELandState landType
+	}
+
+	enum CommandTypeID {
+		UNDEF = 0
+		NEWGAME = 1
+		MOVE = 2
+		PLACE = 3
+	}
+
+	abstract class Action {
+		+ void apply (state::State& actualState)
+		+ void undo (state::State& actualState)
+	}
+
+	class NewGameAction extends Action {
+	}
+
+	class MoveAction extends Action {
+		# std::shared_ptr<Fight> fight
+		# std::vector<int> initPos
+		# std::vector<int> finalPos
+	}
+
+	class PlaceLandAction extends Action {
+		# std::vector<int> finalPos
+		# state::ELandState landType
+	}
+
+	abstract class Fight {
+
+	}
+
+	class CloseFight extends Fight {
+
+	}
+
+	class DistanceFight extends Fight {
+
+	}
+
+	Engine *-- "n1" Command
+	Engine *-- "n2" Action
+	Command *-- "1" CommandTypeID
+	MoveAction *-- "0..1" Fight
+	PlaceLandAction *-- "1" ELandState
+	Engine *-- "1" State
 
 }
 

@@ -1,0 +1,91 @@
+@startuml
+
+package engine {
+    class Command
+    class Engine
+}
+
+package state {
+    class ElementTab
+}
+
+package ai {
+    
+    abstract class AI {
+        # std::vector<std::shared_ptr<engine::Command>>listCommands
+        - std::unique_ptr<engine::Engine> engine
+        # Json::Value jsonFile
+
+        + abstract void run(int player) = 0
+        + void initAI(int player)
+        + std::vector<int> moveCellResearch(int player)
+        ...
+    }
+
+    class RandomAI extends AI {
+        - std:mt19937 randGen
+
+        + void run(int player)
+        + std::vector<int> moveCellResearch(int player)
+        + std::vector<int> adjacentEnemyResearch(int player, int init_i, int init_j)
+    }
+
+    class HeuristicAI extends AI {
+        - std:mt19937 randGen
+        - PathMap ai1Map
+        - PathMap ai2Map
+
+        + void run(int player)
+        + std::vector<int> moveCellResearch(int player)
+        + std::vector<int> adjacentEnemyResearch(int player, int init_i, int init_j)
+        + std::vector<int> betterAIResearch(std::vector<int>& listAI)
+        + std::vector<int> weakerEnnemyResearch(std::vector<int>& listPlayer)
+    }
+
+    class PathMap {
+        - int weidth
+        - int height
+        - std::vector<int> weights
+        - std::priority_queue<Point, std::vector<Point>, PointCompareWeight> priority_queue
+        - Point start
+        - Point destination
+
+        + void init(std::unique_ptr<state::ElementTab>)
+        + bool dijkstra()
+        + void update (const state::ElementTab& grid)
+    }
+
+    class PointCompareWeight {
+        + bool operator()(const Point& a, const Point& b)
+    }
+
+    class Point {
+        # int x
+        # int y
+        # int weight
+
+        + Point transform(Direction d)
+    }
+
+    enum Direction {
+        NONE = 0
+        NORTHWEST = 1
+        NORTHEAST = 2
+        EAST = 3
+        SOUTHEAST = 4
+        SOUTHWEST = 5
+        WEST = 6
+    }
+
+}
+
+AI *--"n" Command
+AI *--"1" Engine
+HeuristicAI *--"2" PathMap
+PathMap *--"n" PointCompareWeight
+PathMap *--"n" Point
+PathMap .. ElementTab
+Direction .. Point
+PointCompareWeight ..> Point
+
+@enduml

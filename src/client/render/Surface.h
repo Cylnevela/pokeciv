@@ -6,6 +6,9 @@
 #include <vector>
 #include <string>
 
+
+namespace sf = SFML;
+
 namespace render {
   class Tile;
 }

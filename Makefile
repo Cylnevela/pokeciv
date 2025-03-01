@@ -1,5 +1,5 @@
 
-
+$(info $(SHELL))
 #HEADERS:=$(shell find ./src -type f -name '*.h')
 
 all: | clean extern configure build
@@ -14,7 +14,8 @@ configure:
 	@mkdir -p build 
 	@cd build && cmake ..
 
-build: bin/client 
+build: 
+	bin/client bin/server
 
 bin/client:
 	@make -s -j4 -C build client
